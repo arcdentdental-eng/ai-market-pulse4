@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>AI Market Pulse — Live NSE</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050810;--bg2:#0a1019;--bg3:#101828;--bg4:#182038;--border:#15203a;--cyan:#06d6e0;--green:#2dd4a0;--red:#f0506e;--yellow:#f5c542;--text:#dfe6f0;--muted:#4a5c80;--label:#6882aa;--font:'Outfit',system-ui,sans-serif;--mono:'JetBrains Mono',monospace}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;-webkit-font-smoothing:antialiased}
+.app{max-width:540px;margin:0 auto;padding-bottom:80px}
+
+/* Header */
+.hdr{padding:18px 16px 14px;background:linear-gradient(180deg,#0c1424,var(--bg));border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hdr::before{content:'';position:absolute;top:-50px;right:-30px;width:160px;height:160px;background:radial-gradient(circle,#06d6e018,transparent 70%);pointer-events:none}
+.hdr-row{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1}
+.logo{font-size:21px;font-weight:900;letter-spacing:-.5px}.logo em{font-style:normal;color:var(--cyan);text-shadow:0 0 24px #06d6e040}
+.tagline{font-size:9px;color:var(--muted);letter-spacing:2.5px;margin-top:2px;font-weight:600;text-transform:uppercase}
+.live-badge{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;color:var(--green);background:#2dd4a00f;border:1px solid #2dd4a020;padding:3px 9px;border-radius:20px;margin-top:4px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.clock{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:3px;text-align:right}
+
+/* Tabs */
+.tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200}
+.tab{flex:1;text-align:center;padding:12px 4px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .2s;letter-spacing:.3px;user-select:none}
+.tab:hover{color:var(--label)}.tab.on{color:var(--cyan);border-bottom-color:var(--cyan)}
+
+/* Sections */
+.sec{padding:14px 14px 4px}
+.stitle{font-size:9.5px;font-weight:800;color:var(--label);letter-spacing:1.8px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.stitle::before{content:'';width:3px;height:11px;background:var(--cyan);border-radius:2px}
+.wbox{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px}
+
+/* Stock List */
+.slist{display:flex;flex-direction:column;gap:3px}
+.sitem{display:flex;align-items:center;justify-content:space-between;padding:12px 13px;background:var(--bg2);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:all .15s}
+.sitem:hover{background:var(--bg3);transform:translateX(2px)}
+.sitem .sym{font-size:13px;font-weight:700}.sitem .nm{font-size:10px;color:var(--muted);margin-top:1px}
+.sitem .arr{font-size:10px;color:var(--cyan);font-weight:700;opacity:.5}.sitem:hover .arr{opacity:1}
+
+/* Search */
+.sinput{width:100%;padding:10px 13px 10px 34px;background:var(--bg2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:12.5px;outline:none;font-family:var(--font);-webkit-appearance:none}
+.sinput:focus{border-color:var(--cyan)}.sinput::placeholder{color:var(--muted)}
+.search-wrap{position:relative;margin-bottom:8px}.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--muted);pointer-events:none}
+
+/* Pills */
+.pills{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.pill{font-size:10px;padding:4px 10px;border-radius:20px;cursor:pointer;font-weight:600;border:1px solid var(--border);font-family:var(--font);background:var(--bg2);color:var(--muted);white-space:nowrap;user-select:none}
+.pill.on{background:#06d6e010;color:var(--cyan);border-color:#06d6e030}
+
+/* Detail */
+.detail{animation:up .25s ease}@keyframes up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.back-btn{display:inline-flex;align-items:center;gap:4px;padding:7px 13px;background:var(--bg3);color:var(--label);border:1px solid var(--border);border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);margin-bottom:12px}
+.back-btn:hover{background:var(--bg4);color:var(--text)}
+.dsym{font-size:20px;font-weight:900}.dname{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* AI Chat Box */
+.ai-box{margin:0 14px 10px;background:linear-gradient(135deg,#081425,#0a1a30);border:1px solid #164e63;border-radius:14px;overflow:hidden}
+.ai-header{padding:12px 14px;border-bottom:1px solid #164e6340;display:flex;align-items:center;gap:8px}
+.ai-avatar{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#06d6e0,#0891b2);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.ai-header-text h4{font-size:12px;font-weight:800;color:var(--cyan);margin:0}
+.ai-header-text span{font-size:9.5px;color:var(--muted)}
+.ai-quick{padding:10px 14px;display:flex;flex-wrap:wrap;gap:5px}
+.ai-qbtn{font-size:10px;padding:6px 11px;border-radius:20px;border:1px solid #164e63;background:#06d6e008;color:#7dd3e8;cursor:pointer;font-family:var(--font);font-weight:600;transition:all .2s;white-space:nowrap}
+.ai-qbtn:hover{background:#06d6e018;border-color:#06d6e050}
+.ai-input-row{padding:8px 10px;display:flex;gap:6px;border-top:1px solid #164e6330}
+.ai-input{flex:1;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:12px;outline:none;font-family:var(--font)}
+.ai-input:focus{border-color:var(--cyan)}
+.ai-input::placeholder{color:var(--muted)}
+.ai-send{padding:9px 14px;background:var(--cyan);color:#050810;border:none;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;font-family:var(--font);transition:all .2s;white-space:nowrap}
+.ai-send:hover{background:#0ae8f2}
+.ai-powered{padding:6px 14px 10px;font-size:9px;color:var(--muted);text-align:center}
+.ai-powered a{color:var(--cyan);text-decoration:none;font-weight:600}
+
+.hidden{display:none!important}
+.disc{font-size:8.5px;color:#14203a;padding:14px;line-height:1.6;border-top:1px solid var(--border);margin-top:8px}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="hdr"><div class="hdr-row">
+    <div><div class="logo"><em>AI</em> Market Pulse</div><div class="tagline">Live NSE · TradingView · AI Powered</div></div>
+    <div><div class="live-badge"><span class="live-dot"></span>LIVE</div><div class="clock" id="clock"></div></div>
+  </div></div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab on" onclick="go('dash')">Dashboard</div>
+    <div class="tab" onclick="go('stocks')">Stocks</div>
+    <div class="tab" onclick="go('chart')">Chart</div>
+    <div class="tab" onclick="go('scan')">Screener</div>
+  </div>
+
+  <!-- ══════ DASHBOARD ══════ -->
+  <div id="p-dash">
+    <!-- Ticker -->
+    <div style="overflow:hidden;border-bottom:1px solid var(--border)"><div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>{"symbols":[{"proName":"NSE:NIFTY","title":"NIFTY 50"},{"proName":"BSE:SENSEX","title":"SENSEX"},{"proName":"NSE:BANKNIFTY","title":"BANK NIFTY"},{"proName":"NSE:RELIANCE","title":"RELIANCE"},{"proName":"NSE:TCS","title":"TCS"},{"proName":"NSE:HDFCBANK","title":"HDFC BANK"},{"proName":"NSE:INFY","title":"INFY"},{"proName":"NSE:ICICIBANK","title":"ICICI"},{"proName":"NSE:ITC","title":"ITC"},{"proName":"NSE:SBIN","title":"SBI"},{"proName":"NSE:BHARTIARTL","title":"AIRTEL"},{"proName":"NSE:TATAMOTORS","title":"TATAMOTORS"},{"proName":"NSE:BAJFINANCE","title":"BAJFIN"}],"showSymbolLogo":true,"isTransparent":true,"displayMode":"adaptive","colorTheme":"dark","locale":"in"}</script></div></div>
+
+    <!-- Market Overview -->
+    <div class="sec"><div class="stitle">Market Overview</div>
+    <div class="wbox" style="height:390px"><div class="tradingview-widget-container" style="height:100%"><div class="tradingview-widget-container__widget" style="height:100%"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>{"colorTheme":"dark","dateRange":"1D","showChart":true,"locale":"in","isTransparent":true,"showSymbolLogo":true,"showFloatingTooltip":true,"width":"100%","height":"100%","tabs":[{"title":"Indices","symbols":[{"s":"NSE:NIFTY","d":"NIFTY 50"},{"s":"BSE:SENSEX","d":"SENSEX"},{"s":"NSE:BANKNIFTY","d":"BANK NIFTY"},{"s":"NSE:CNXIT","d":"NIFTY IT"},{"s":"NSE:CNXPHARMA","d":"NIFTY PHARMA"}]},{"title":"Stocks","symbols":[{"s":"NSE:RELIANCE","d":"Reliance"},{"s":"NSE:TCS","d":"TCS"},{"s":"NSE:HDFCBANK","d":"HDFC Bank"},{"s":"NSE:INFY","d":"Infosys"},{"s":"NSE:ICICIBANK","d":"ICICI Bank"},{"s":"NSE:ITC","d":"ITC"},{"s":"NSE:SBIN","d":"SBI"},{"s":"NSE:BHARTIARTL","d":"Airtel"},{"s":"NSE:BAJFINANCE","d":"Bajaj Fin"},{"s":"NSE:TATAMOTORS","d":"Tata Motors"}]}]}</script></div></div></div>
+
+    <!-- Hotlists -->
+    <div class="sec"><div class="stitle">Top Movers — NSE</div>
+    <div class="wbox" style="height:430px"><div class="tradingview-widget-container" style="height:100%"><div class="tradingview-widget-container__widget" style="height:100%"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-hotlists.js" async>{"colorTheme":"dark","dateRange":"1D","exchange":"NSE","showChart":true,"locale":"in","isTransparent":true,"showSymbolLogo":true,"showFloatingTooltip":true,"width":"100%","height":"100%"}</script></div></div></div>
+
+    <!-- Heatmap -->
+    <div class="sec"><div class="stitle">NIFTY 50 Heatmap</div>
+    <div class="wbox" style="height:400px"><div class="tradingview-widget-container" style="height:100%"><div class="tradingview-widget-container__widget" style="height:100%"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js" async>{"exchanges":["NSE"],"dataSource":"NIFTY50","grouping":"sector","blockSize":"market_cap_basic","blockColor":"change","locale":"in","colorTheme":"dark","hasTopBar":false,"isDataSetEnabled":false,"isZoomEnabled":true,"hasSymbolTooltip":true,"isTransparent":true,"width":"100%","height":"100%"}</script></div></div></div>
+
+    <!-- News -->
+    <div class="sec"><div class="stitle">Market News</div>
+    <div class="wbox" style="height:380px"><div class="tradingview-widget-container" style="height:100%"><div class="tradingview-widget-container__widget" style="height:100%"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>{"feedMode":"market","market":"stock","isTransparent":true,"displayMode":"regular","width":"100%","height":"100%","colorTheme":"dark","locale":"in"}</script></div></div></div>
+  </div>
+
+  <!-- ══════ STOCKS ══════ -->
+  <div id="p-stocks" class="hidden">
+    <div id="sl-view"><div class="sec">
+      <div class="search-wrap"><span class="search-icon">🔍</span><input class="sinput" id="ssearch" placeholder="Search NIFTY 50 stocks..." oninput="filt()"></div>
+      <div class="pills" id="spills"></div>
+      <div class="slist" id="slist"></div>
+    </div></div>
+
+    <div id="sd-view" class="hidden"><div class="sec detail">
+      <button class="back-btn" onclick="back()">← Back</button>
+      <div class="dsym" id="dsym"></div><div class="dname" id="dname"></div>
+    </div>
+    <div class="sec"><div class="wbox" id="w-info" style="height:180px"></div></div>
+    <div class="sec"><div class="stitle">Live Chart with Indicators</div><div class="wbox"><div id="w-chart" style="height:440px"></div></div></div>
+    <div class="sec"><div class="stitle">Technical Analysis — Buy / Sell / Hold</div><div class="wbox"><div id="w-ta" style="height:430px"></div></div></div>
+
+    <!-- AI Chat Box -->
+    <div class="ai-box" id="ai-box">
+      <div class="ai-header">
+        <div class="ai-avatar">🧠</div>
+        <div class="ai-header-text">
+          <h4>Ask AI — Powered by Claude</h4>
+          <span>Tap a quick question or type your own</span>
+        </div>
+      </div>
+      <div class="ai-quick" id="ai-quick">
+        <button class="ai-qbtn" onclick="askAI('buy or sell')">Should I buy or sell?</button>
+        <button class="ai-qbtn" onclick="askAI('target price')">Target price?</button>
+        <button class="ai-qbtn" onclick="askAI('latest news')">Latest news?</button>
+        <button class="ai-qbtn" onclick="askAI('support resistance')">Support & Resistance?</button>
+        <button class="ai-qbtn" onclick="askAI('full analysis')">Full analysis</button>
+        <button class="ai-qbtn" onclick="askAI('compare with peers')">Compare with peers</button>
+      </div>
+      <div class="ai-input-row">
+        <input class="ai-input" id="ai-input" placeholder="Ask anything about this stock..." onkeydown="if(event.key==='Enter')askCustom()">
+        <button class="ai-send" onclick="askCustom()">Ask AI →</button>
+      </div>
+      <div class="ai-powered">Opens <a href="https://claude.ai" target="_blank">claude.ai</a> with your question · 100% free</div>
+    </div>
+
+    <div class="sec"><div class="stitle">Financials</div><div class="wbox"><div id="w-fin" style="height:380px"></div></div></div>
+    <div class="sec"><div class="stitle">Company Profile</div><div class="wbox"><div id="w-prof" style="height:380px"></div></div></div>
+    </div>
+  </div>
+
+  <!-- ══════ CHART ══════ -->
+  <div id="p-chart" class="hidden"><div class="sec"><div class="stitle">Advanced Chart — Search Any Stock</div>
+  <div class="wbox" style="height:520px"><div class="tradingview-widget-container" style="height:100%"><div class="tradingview-widget-container__widget" style="height:100%"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>{"autosize":true,"symbol":"NSE:NIFTY","interval":"D","timezone":"Asia/Kolkata","theme":"dark","style":"1","locale":"in","allow_symbol_change":true,"calendar":false,"studies":["STD;RSI","STD;MACD","STD;Bollinger_Bands","STD;Supertrend"],"support_host":"https://www.tradingview.com"}</script></div></div></div></div>
+
+  <!-- ══════ SCREENER ══════ -->
+  <div id="p-scan" class="hidden">
+    <div class="sec"><div class="stitle">Stock Screener — India</div>
+    <div class="wbox" style="height:550px"><div class="tradingview-widget-container" style="height:100%"><div class="tradingview-widget-container__widget" style="height:100%"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>{"width":"100%","height":"100%","defaultColumn":"overview","defaultScreen":"most_capitalized","market":"india","showToolbar":true,"colorTheme":"dark","locale":"in","isTransparent":true}</script></div></div></div>
+    <div class="sec"><div class="stitle">Economic Calendar</div>
+    <div class="wbox" style="height:400px"><div class="tradingview-widget-container" style="height:100%"><div class="tradingview-widget-container__widget" style="height:100%"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>{"colorTheme":"dark","isTransparent":true,"width":"100%","height":"100%","locale":"in","importanceFilter":"-1,0,1"}</script></div></div></div>
+  </div>
+
+  <div class="disc">⚠️ Live data powered by TradingView (free). Buy/Sell signals from TradingView's 26+ technical indicators. For AI-powered deeper analysis, ask Claude at claude.ai. Educational purposes only — not financial advice. Use a SEBI-registered broker for actual trades.</div>
+</div>
+
+<script>
+// ── Stocks Data ──
+const ST=[
+  {s:"RELIANCE",n:"Reliance Industries",c:"Energy"},{s:"TCS",n:"Tata Consultancy",c:"IT"},
+  {s:"HDFCBANK",n:"HDFC Bank",c:"Banking"},{s:"INFY",n:"Infosys",c:"IT"},
+  {s:"ICICIBANK",n:"ICICI Bank",c:"Banking"},{s:"HINDUNILVR",n:"Hindustan Unilever",c:"FMCG"},
+  {s:"ITC",n:"ITC Limited",c:"FMCG"},{s:"SBIN",n:"State Bank of India",c:"Banking"},
+  {s:"BHARTIARTL",n:"Bharti Airtel",c:"Telecom"},{s:"KOTAKBANK",n:"Kotak Mahindra Bank",c:"Banking"},
+  {s:"LT",n:"Larsen & Toubro",c:"Infra"},{s:"AXISBANK",n:"Axis Bank",c:"Banking"},
+  {s:"BAJFINANCE",n:"Bajaj Finance",c:"Finance"},{s:"MARUTI",n:"Maruti Suzuki",c:"Auto"},
+  {s:"HCLTECH",n:"HCL Technologies",c:"IT"},{s:"TATAMOTORS",n:"Tata Motors",c:"Auto"},
+  {s:"SUNPHARMA",n:"Sun Pharma",c:"Pharma"},{s:"TITAN",n:"Titan Company",c:"Consumer"},
+  {s:"NTPC",n:"NTPC Limited",c:"Power"},{s:"ASIANPAINT",n:"Asian Paints",c:"Consumer"},
+  {s:"WIPRO",n:"Wipro",c:"IT"},{s:"ULTRACEMCO",n:"UltraTech Cement",c:"Cement"},
+  {s:"POWERGRID",n:"Power Grid",c:"Power"},{s:"TATASTEEL",n:"Tata Steel",c:"Metals"},
+  {s:"ADANIENT",n:"Adani Enterprises",c:"Conglomerate"},{s:"TECHM",n:"Tech Mahindra",c:"IT"},
+  {s:"NESTLEIND",n:"Nestle India",c:"FMCG"},{s:"ONGC",n:"ONGC",c:"Energy"},
+  {s:"COALINDIA",n:"Coal India",c:"Mining"},{s:"BAJAJFINSV",n:"Bajaj Finserv",c:"Finance"},
+];
+let curSec="All",curSym=null;
+
+// ── Clock ──
+setInterval(()=>{document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true})},1000);
+
+// ── Tabs ──
+function go(p){
+  ['dash','stocks','chart','scan'].forEach(t=>document.getElementById('p-'+t).classList.toggle('hidden',t!==p));
+  document.querySelectorAll('.tab').forEach((e,i)=>e.classList.toggle('on',['dash','stocks','chart','scan'][i]===p));
+  if(p==='stocks'){back();ren();}
+  scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── List ──
+function ren(){
+  const q=(document.getElementById('ssearch').value||'').toLowerCase();
+  const f=ST.filter(x=>(x.s.toLowerCase().includes(q)||x.n.toLowerCase().includes(q))&&(curSec==='All'||x.c===curSec));
+  document.getElementById('slist').innerHTML=f.map(x=>`<div class="sitem" onclick="open('${x.s}','${x.n.replace(/'/g,"\\'")}')"><div><div class="sym">${x.s}</div><div class="nm">${x.n} · ${x.c}</div></div><div class="arr">→</div></div>`).join('');
+}
+function filt(){ren()}
+function initP(){
+  const s=['All',...[...new Set(ST.map(x=>x.c))].sort()];
+  document.getElementById('spills').innerHTML=s.map(x=>`<span class="pill ${x==='All'?'on':''}" onclick="pSec('${x}',this)">${x}</span>`).join('');
+}
+function pSec(s,e){curSec=s;document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));e.classList.add('on');ren();}
+
+// ── Inject Widget ──
+function inj(id,src,cfg){
+  const c=document.getElementById(id);c.innerHTML='';
+  const o=document.createElement('div');o.className='tradingview-widget-container';o.style.height='100%';
+  const w=document.createElement('div');w.className='tradingview-widget-container__widget';w.style.cssText='height:100%;width:100%';
+  o.appendChild(w);const sc=document.createElement('script');sc.type='text/javascript';sc.src=src;sc.async=true;sc.textContent=JSON.stringify(cfg);
+  o.appendChild(sc);c.appendChild(o);
+}
+
+// ── Open Stock ──
+function open(sym,name){
+  curSym=sym;
+  document.getElementById('sl-view').classList.add('hidden');
+  document.getElementById('sd-view').classList.remove('hidden');
+  document.getElementById('dsym').textContent=sym;
+  document.getElementById('dname').textContent=name+' — NSE';
+  // Reset AI input
+  const aiIn=document.getElementById('ai-input');
+  if(aiIn)aiIn.value='';
+  const tv='NSE:'+sym;
+  inj('w-info','https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js',{symbol:tv,width:"100%",locale:"in",colorTheme:"dark",isTransparent:true});
+  inj('w-chart','https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js',{autosize:true,symbol:tv,interval:"D",timezone:"Asia/Kolkata",theme:"dark",style:"1",locale:"in",allow_symbol_change:false,studies:["STD;RSI","STD;MACD","STD;Bollinger_Bands","STD;Supertrend"],support_host:"https://www.tradingview.com"});
+  inj('w-ta','https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js',{interval:"1D",width:"100%",height:"100%",isTransparent:true,symbol:tv,showIntervalTabs:true,displayMode:"single",locale:"in",colorTheme:"dark"});
+  inj('w-fin','https://s3.tradingview.com/external-embedding/embed-widget-financials.js',{colorTheme:"dark",isTransparent:true,symbol:tv,width:"100%",height:"100%",locale:"in"});
+  inj('w-prof','https://s3.tradingview.com/external-embedding/embed-widget-symbol-profile.js',{colorTheme:"dark",isTransparent:true,symbol:tv,width:"100%",height:"100%",locale:"in"});
+  scrollTo({top:0,behavior:'smooth'});
+}
+function back(){
+  document.getElementById('sd-view').classList.add('hidden');
+  document.getElementById('sl-view').classList.remove('hidden');
+  ['w-info','w-chart','w-ta','w-fin','w-prof'].forEach(id=>document.getElementById(id).innerHTML='');
+  curSym=null;
+}
+
+// ── AI Chat (opens claude.ai with pre-filled prompt) ──
+function askAI(type){
+  if(!curSym)return;
+  const prompts={
+    'buy or sell':`Analyze ${curSym} on NSE India. Search for the current price, latest news, and technical indicators. Give me a clear BUY, SELL, or HOLD recommendation with: 1) Entry price 2) Stop loss 3) Target 1 and Target 2 4) Key support and resistance levels 5) Risks. Be specific with numbers.`,
+    'target price':`What is the target price for ${curSym} (NSE India) for the next 1 month and 3 months? Search for the latest analyst targets, technical levels, and give me specific price targets with reasoning.`,
+    'latest news':`Search for the latest news about ${curSym} (NSE India) from the last 7 days. How does the news affect the stock? Should I be bullish or bearish based on recent developments?`,
+    'support resistance':`What are the key support and resistance levels for ${curSym} (NSE India) right now? Search for the current price and give me: immediate support, strong support, immediate resistance, strong resistance, pivot points, and Fibonacci levels.`,
+    'full analysis':`Give me a complete analysis of ${curSym} (NSE India). Search for current price, latest news, and provide: 1) Technical analysis (RSI, MACD, moving averages, trend) 2) Fundamental snapshot (PE, market cap, recent earnings) 3) Latest news impact 4) Clear BUY/SELL/HOLD with entry, stoploss, target1, target2 5) Key risks 6) Comparison with sector peers.`,
+    'compare with peers':`Compare ${curSym} (NSE India) with its top 3 sector peers. Search for current prices and give me a comparison table with: price, PE ratio, market cap, 1-month return, RSI, and analyst rating. Which one is the best buy right now and why?`
+  };
+  const prompt=prompts[type]||`Analyze ${curSym} on NSE India. ${type}`;
+  const url='https://claude.ai/new?q='+encodeURIComponent(prompt);
+  window.open(url,'_blank');
+}
+
+function askCustom(){
+  if(!curSym)return;
+  const input=document.getElementById('ai-input');
+  const q=input.value.trim();
+  if(!q)return;
+  const prompt=`About ${curSym} (NSE India stock): ${q}. Please search for the latest data and give me a detailed answer with specific numbers and actionable advice.`;
+  const url='https://claude.ai/new?q='+encodeURIComponent(prompt);
+  window.open(url,'_blank');
+  input.value='';
+}
+
+// Init
+initP();ren();
+</script>
+</body>
+</html>
